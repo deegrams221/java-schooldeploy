@@ -26,6 +26,7 @@ public class CourseController
 
     @Autowired
     private CourseService courseService;
+
     // Adding custom swagger documentation for list all courses with paging
     @ApiOperation(value = "Return all Courses", response = Course.class,
             responseContainer = "List")
