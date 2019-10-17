@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.lambdaschool</groupId>
-    <artifactId>starthere</artifactId>
+    <artifactId>schooldeployapp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>starthere</name>
+    <name>schooldeployapp</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -158,7 +158,7 @@
 
     <build>
         <!--        <finalName>${project.artifactId}</finalName>-->
-        <finalName>deegrams-starthere</finalName>
+        <finalName>deegrams-schooldeployapp</finalName>
 
         <plugins>
             <plugin>

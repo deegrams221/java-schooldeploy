@@ -1,5 +1,5 @@
 // curl cheetsheet
-// username - 
+// username -
 // password -
 // access_token -
 // login url - http://deegrams-schooldeployapp.herokuapp.com/login
