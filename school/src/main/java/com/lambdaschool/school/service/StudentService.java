@@ -7,10 +7,7 @@ import java.util.List;
 
 public interface StudentService
 {
-    List<Student> findAll();
-
-    // paging and sorting
-    List<Student> findAllPageable(Pageable pageable);
+    List<Student> findAll(Pageable pageable);
 
     Student findStudentById(long id);
 

@@ -18,16 +18,7 @@ public class StudentServiceImpl implements StudentService
     private StudentRepository studrepos;
 
     @Override
-    public List<Student> findAll()
-    {
-        List<Student> list = new ArrayList<>();
-        studrepos.findAll().iterator().forEachRemaining(list::add);
-        return list;
-    }
-
-    // paging and sorting - generate findAllPageable
-    @Override
-    public List<Student> findAllPageable(Pageable pageable)
+    public List<Student> findAll(Pageable pageable)
     {
         List<Student> list = new ArrayList<>();
         studrepos.findAll(pageable).iterator().forEachRemaining(list::add);

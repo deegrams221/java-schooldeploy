@@ -12,11 +12,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-// boiler plate code
-// need to add swagger2 and swagger-ui to pom file dependencies
-// swagger-ui - open in browser localhost:2019/swagger-ui.html
-// swagger-ui documentation at the url is so cool!
-
 @Configuration
 @EnableSwagger2
 public class Swagger2Config
@@ -27,22 +22,21 @@ public class Swagger2Config
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors
-                        .basePackage("com.lambdaschool.school")) // this changes depending on the application
+                        .basePackage("com.lambdaschool.school"))
                 .paths(PathSelectors.any())
-                .build() // need 'build()' for useDefaultResponseMessages to work
-                //                .paths(PathSelectors.regex("/**"))
-                .useDefaultResponseMessages(false) // Allows only my exception responses
-                .ignoredParameterTypes(Pageable.class) // allows only my paging parameter list
-                .apiInfo(apiEndPointsInfo());
+                .build()
+                // .paths(PathSelectors.regex("/**"))
+                .apiInfo(apiEndPointsInfo())
+                .useDefaultResponseMessages(false)
+                .ignoredParameterTypes(Pageable.class);
     }
 
     private ApiInfo apiEndPointsInfo()
     {
-        return new ApiInfoBuilder().title("Project School Pages Swagger")
-                .description("Project School Pages Swagger")
-                .contact(new Contact("Diana Grams", "http://www.lambdaschool.com", "deegrams221@gmail.com"))
+        return new ApiInfoBuilder().title("Java School Back End Deployment Project")
+                .description("Java School Back End Deployment Project")
+                .contact(new Contact("Vicky Yue", "http://www.lambdaschool.com", "vyue013@gmail.com"))
                 .license("MIT").licenseUrl("https://github.com/LambdaSchool/java-crudysnacks/blob/master/LICENSE")
                 .version("1.0.0").build();
-        // can only have 1 contact per api - update contact info to be for yourself
     }
 }

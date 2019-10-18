@@ -4,8 +4,6 @@ import com.lambdaschool.school.model.ErrorDetail;
 import com.lambdaschool.school.model.Student;
 import com.lambdaschool.school.service.StudentService;
 import io.swagger.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,129 +22,88 @@ import java.util.List;
 @RequestMapping("/students")
 public class StudentController
 {
-    private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
-
     @Autowired
     private StudentService studentService;
 
     // Please note there is no way to add students to course yet!
-// Adding custom swagger documentation for list all students with paging
-    @ApiOperation(value = "Return all students",
-            response = Student.class,
-            responseContainer = "List")
 
-    @ApiImplicitParams({@ApiImplicitParam(name = "page",
-            dataType = "integer", paramType = "query",
-            value = "Results page you want to retrieve (0..N)"),
-            @ApiImplicitParam(name = "size", dataType = "integer",
-                    paramType = "query", value = "Number of records per page."),
-            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string",
-                    paramType = "query", value = "Sorting criteria in for format: property(,asc|desc.). " +
-                    "Default sort order is ascending. " +
-                    "Multiple sort criteria are supported.")})
+    @ApiOperation(value = "returns all Students", response = Student.class, responseContainer = "List")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (0..N)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page."),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Sorting criteria in the format: property(,asc|desc). " +
+                            "Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")})
 
-    // paging and sorting
-    // localhost:2019/students/students/paging/?page=1&size=10
-    @GetMapping(value = "/students/paging",
-            produces = {"application/json"})
-    public ResponseEntity<?> ListAllStudentsByPage(@PageableDefault(page = 1,
-            size = 3) Pageable pageable)
-    {                        // findAllPageable(pageable.unpaged()) <- returns everything
-        List<Student> myStudents = studentService.findAllPageable(pageable);
-        return new ResponseEntity<>(myStudents, HttpStatus.OK);
-    }
-
-    // Adding custom swagger documentation for list all students
-    @ApiOperation(value = "Return all students",
-            response = Student.class,
-            responseContainer = "List")
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "Student List Found",
-            response = Student.class),
-            @ApiResponse(code = 404,
-                    message = "Student List Not Found",
-                    response = ErrorDetail.class)})
-
+    // http://localhost:2019/students/students/?page=1&size=1
     @GetMapping(value = "/students", produces = {"application/json"})
-    public ResponseEntity<?> listAllStudents(HttpServletRequest request)
+    public ResponseEntity<?> listAllStudents(
+            @PageableDefault(page = 0,
+                    size = 3)
+                    Pageable pageable)
     {
-        logger.info(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
-        List<Student> myStudents = studentService.findAll();
+        List<Student> myStudents = studentService.findAll(pageable);
         return new ResponseEntity<>(myStudents, HttpStatus.OK);
     }
 
-    // Adding custom swagger documentation for get student by id
-    @ApiOperation(value = "Retrieves a student associate with the Id",
-            response = Student.class)
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "Student Found",
-            response = Student.class),
-            @ApiResponse(code = 404,
-                    message = "Student Not Found",
-                    response = ErrorDetail.class)})
-
+    @ApiOperation(value = "returns Student by Id", response = Student.class)
+    @ApiResponses(value = {
+            // code created
+            @ApiResponse(code = 201, message = "Student Found - Successful",
+                    response = Student.class),
+            // code error
+            @ApiResponse(code = 500, message = "Error - Student Not Found",
+                    response = ErrorDetail.class)
+    })
     @GetMapping(value = "/Student/{StudentId}",
-                produces = {"application/json"})
+            produces = {"application/json"})
     public ResponseEntity<?> getStudentById(
-            // Adding custom swagger params for get student by id
-            @ApiParam(value = "Student Id",
-                    required = true,
-                    example = "1") // example is always set as a string
-            @PathVariable Long StudentId,
-            HttpServletRequest request)
+            @PathVariable
+                    Long StudentId)
     {
-        logger.info(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
         Student r = studentService.findStudentById(StudentId);
         return new ResponseEntity<>(r, HttpStatus.OK);
     }
 
-    // Adding custom swagger documentation for get student by name containing
-    @ApiOperation(value = "Retrieves a student",
-            response = Student.class)
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "Student Found",
-            response = Student.class),
-            @ApiResponse(code = 404,
-                    message = "Student Not Found",
-                    response = ErrorDetail.class)})
-
+    @ApiOperation(value = "returns Student by Name", response = Student.class)
+    @ApiResponses(value = {
+            // code created
+            @ApiResponse(code = 201, message = "Student Found by Name - Successful",
+                    response = Student.class),
+            // code error
+            @ApiResponse(code = 500, message = "Error - Student Not Found by Name",
+                    response = ErrorDetail.class)
+    })
     @GetMapping(value = "/student/namelike/{name}",
-                produces = {"application/json"})
+            produces = {"application/json"})
     public ResponseEntity<?> getStudentByNameContaining(
-            // Adding custom swagger params for get student by name containing
-            @ApiParam(value = "Student Name", required = true, example = "Alice%20Cooper")
-            @PathVariable String name,
-            HttpServletRequest request)
+            @PathVariable String name)
     {
-        logger.info(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
         List<Student> myStudents = studentService.findStudentByNameLike(name);
         return new ResponseEntity<>(myStudents, HttpStatus.OK);
     }
 
-    // Adding custom swagger documentation for add new student
-    @ApiOperation(value = "Add a new student",
-            notes = "New student Id will be sent to the location header",
+    @ApiOperation(value = "Creates a new Student",
+            notes = "The newly created student id will be sent in the location header",
             response = void.class)
-    @ApiResponses(value = {@ApiResponse(code = 201,
-            message = "Student Added",
-            response = void.class),
-            @ApiResponse(code = 500,
-                    message = "Could Not Add Student",
-                    response = ErrorDetail.class)})
-
+    @ApiResponses(value = {
+            // code created
+            @ApiResponse(code = 201, message = "Student Successfully Created",
+                    response = void.class),
+            // code error
+            @ApiResponse(code = 500, message = "Error Creating Student",
+                    response = void.class)
+    })
     @PostMapping(value = "/Student",
-                 consumes = {"application/json"},
-                 produces = {"application/json"})
+            consumes = {"application/json"},
+            produces = {"application/json"})
     public ResponseEntity<?> addNewStudent(@Valid
                                            @RequestBody
-                                                   Student newStudent,
-                                           HttpServletRequest request) throws URISyntaxException
+                                                   Student newStudent) throws URISyntaxException
     {
-        logger.info(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
         newStudent = studentService.save(newStudent);
 
         // set the location header for the newly created resource
@@ -158,58 +114,40 @@ public class StudentController
         return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
     }
 
-    // Adding custom swagger documentation for update student
-    @ApiOperation(value = "Update a student",
-            response = void.class)
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "Student Information Updated",
-            response = void.class),
-            @ApiResponse(code = 500,
-                    message = "Could Not Update Student",
-                    response = ErrorDetail.class)})
-
+    @ApiOperation(value = "Updates a Student",
+            response = Student.class)
+    @ApiResponses(value = {
+            // code created
+            @ApiResponse(code = 201, message = "Student Successfully Updated",
+                    response = void.class),
+            // code error
+            @ApiResponse(code = 500, message = "Error Updating Student",
+                    response = void.class)
+    })
     @PutMapping(value = "/Student/{Studentid}")
     public ResponseEntity<?> updateStudent(
-            // Adding custom swagger params for update student
-            @ApiParam(value = "Student Id",
-                    required = true,
-                    example = "1")
             @RequestBody
                     Student updateStudent,
             @PathVariable
-                    long Studentid,
-            HttpServletRequest request)
+                    long Studentid)
     {
-        logger.info(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
         studentService.update(updateStudent, Studentid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Adding custom swagger documentation for delete student
-    @ApiOperation(value = "Delete a student",
-            response = void.class)
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "Student Deleted",
-            response = void.class),
-            @ApiResponse(code = 500,
-                    message = "Could Not Delete Student",
-                    response = ErrorDetail.class)})
-
+    @ApiOperation(value = "deletes Student by Id", response = Student.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Student Successfully Deleted",
+                    response = void.class),
+            @ApiResponse(code = 500, message = "Error Deleting Student",
+                    response = ErrorDetail.class)
+    })
     @DeleteMapping("/Student/{Studentid}")
     public ResponseEntity<?> deleteStudentById(
-            // Adding custom swagger params for delete student
-            @ApiParam(value = "Student Id",
-                    required = true,
-                    example = "1")
             @PathVariable
-                    long Studentid,
-            HttpServletRequest request)
+                    long Studentid)
     {
-        logger.info(request.getMethod().toUpperCase() + " " + request.getRequestURI() + " accessed");
-
         studentService.delete(Studentid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

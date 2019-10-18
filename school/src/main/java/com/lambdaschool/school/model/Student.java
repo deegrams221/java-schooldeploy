@@ -5,36 +5,27 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-// adding custom swagger documentation in models
 @ApiModel(value = "Student", description = "The Student Entity")
-
 @Entity
 @Table(name = "student")
 public class Student
 {
-    // adding custom swagger documentation for studid
-    @ApiModelProperty(name = "studid",
-            value = "primary key for Student",
+    @ApiModelProperty(name = "studid", value = "primary key for Student",
             required = true, example = "1")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long studid;
 
-    // adding custom swagger documentation for studname
-    @ApiModelProperty(name = "studname",
-            value = "Student Name",
-            required = true,
-            example = "Rick%20Allen")
     private String studname;
 
+    @ApiModelProperty(name = "courses", value = "List of Courses")
     @ManyToMany
     @JoinTable(name = "studcourses",
-               joinColumns = {@JoinColumn(name = "studid")},
-               inverseJoinColumns = {@JoinColumn(name = "courseid")})
+            joinColumns = {@JoinColumn(name = "studid")},
+            inverseJoinColumns = {@JoinColumn(name = "courseid")})
     @JsonIgnoreProperties("students")
     private List<Course> courses = new ArrayList<>();
 

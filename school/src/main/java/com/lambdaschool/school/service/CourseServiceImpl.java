@@ -1,6 +1,7 @@
 package com.lambdaschool.school.service;
 
 import com.lambdaschool.school.model.Course;
+import com.lambdaschool.school.model.Student;
 import com.lambdaschool.school.repository.CourseRepository;
 import com.lambdaschool.school.view.CountStudentsInCourses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service(value = "courseService")
 public class CourseServiceImpl implements CourseService
@@ -19,18 +19,9 @@ public class CourseServiceImpl implements CourseService
     private CourseRepository courserepos;
 
     @Override
-    public ArrayList<Course> findAll()
+    public ArrayList<Course> findAll(Pageable pageable)
     {
         ArrayList<Course> list = new ArrayList<>();
-        courserepos.findAll().iterator().forEachRemaining(list::add);
-        return list;
-    }
-
-    // paging and sorting - generate findAllPageable
-    @Override
-    public List<Course> findAllPageable(Pageable pageable)
-    {
-        List<Course> list = new ArrayList<>();
         courserepos.findAll(pageable).iterator().forEachRemaining(list::add);
         return list;
     }
@@ -53,5 +44,31 @@ public class CourseServiceImpl implements CourseService
         {
             throw new EntityNotFoundException(Long.toString(id));
         }
+    }
+
+    @Override
+    public Course findCourseById(long id) throws EntityNotFoundException
+    {
+        return courserepos.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Long.toString(id)));
+    }
+
+    @Transactional
+    @Override
+    public Course save(Course course)
+    {
+        Course newCourse = new Course();
+
+        newCourse.setCoursename(course.getCoursename());
+        newCourse.setInstructor(course.getInstructor());
+
+        ArrayList<Student> newStudent = new ArrayList<>();
+        for (Student s : course.getStudents())
+        {
+            newStudent.add(new Student(s.getStudname()));
+        }
+        newCourse.setStudents(newStudent);
+
+        return courserepos.save(newCourse);
     }
 }

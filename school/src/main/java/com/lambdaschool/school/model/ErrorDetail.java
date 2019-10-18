@@ -1,6 +1,5 @@
 package com.lambdaschool.school.model;
 
-
 import com.lambdaschool.school.exceptions.ValidationError;
 
 import java.text.SimpleDateFormat;
@@ -11,17 +10,13 @@ import java.util.Map;
 
 public class ErrorDetail
 {
-    // fields
     private String title;
-    private int status; // returns the error code
+    private int status;
     private String detail;
-    private String timestamp; // using string so its in the same format each time
-    private String developermessage;
-    private Map<String, List<ValidationError>> errors = new HashMap<>();
+    private String timestamp;
+    private String developerMessage;
+    private Map<String, List<ValidationError>> errors = new HashMap<String, List<ValidationError>>();
 
-    // not adding constructors - rely on default constructor
-
-    // getters and setters - all fields including map
     public String getTitle()
     {
         return title;
@@ -58,19 +53,18 @@ public class ErrorDetail
     }
 
     public void setTimestamp(Long timestamp)
-    {                          // dd MMM yyyy HH:mm:ss:SSS z = day month year hour minutes seconds milliseconds timezone
-        this.timestamp = new SimpleDateFormat("dd MMM yyyy HH:mm:ss:SSS z").format(new Date(timestamp));
-        // converts the timestamp into a string to be returned
+    {
+        this.timestamp = new SimpleDateFormat("dd MMM yyyy HH:mm:ss:SSS Z").format(new Date(timestamp));
     }
 
-    public String getDevelopermessage()
+    public String getDeveloperMessage()
     {
-        return developermessage;
+        return developerMessage;
     }
 
-    public void setDevelopermessage(String developermessage)
+    public void setDeveloperMessage(String developerMessage)
     {
-        this.developermessage = developermessage;
+        this.developerMessage = developerMessage;
     }
 
     public Map<String, List<ValidationError>> getErrors()

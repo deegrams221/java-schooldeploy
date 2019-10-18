@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface CourseRepository extends PagingAndSortingRepository<Course, Long>
 {
@@ -19,4 +20,3 @@ public interface CourseRepository extends PagingAndSortingRepository<Course, Lon
     @Query(value = "SELECT s.courseid, coursename, count(studid) as countstudents FROM studcourses s INNER JOIN course c on s.courseid=c.courseid GROUP BY s.courseid, coursename", nativeQuery = true)
     ArrayList<CountStudentsInCourses> getCountStudentsInCourse();
 }
-

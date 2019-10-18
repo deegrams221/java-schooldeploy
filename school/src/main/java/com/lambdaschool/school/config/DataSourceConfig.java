@@ -1,6 +1,5 @@
 package com.lambdaschool.school.config;
 
-
 import com.lambdaschool.school.SchoolApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +24,6 @@ public class DataSourceConfig
 
     @Autowired
     private ApplicationContext appContext;
-    @Autowired
-    private Environment env;
 
     private static void checkEnvironmentVariable(String envvar)
     {
@@ -36,6 +33,9 @@ public class DataSourceConfig
             stop = true;
         }
     }
+
+    @Autowired
+    private Environment env;
 
     @Bean(name = "dsCustom")
     public DataSource dataSource()
@@ -47,7 +47,6 @@ public class DataSourceConfig
 
         String dbValue = env.getProperty("local.run.db");
 
-        // allows to switch between postgresql and h2
         if (dbValue.equalsIgnoreCase("POSTGRESQL"))
         {
             checkEnvironmentVariable("MYDBHOST");
@@ -58,8 +57,7 @@ public class DataSourceConfig
             if (stop)
             {
                 logger.info("Manually shutting down system");
-                int exitCode = SpringApplication.exit(appContext,
-                                                      (ExitCodeGenerator) () -> 1);
+                int exitCode = SpringApplication.exit(appContext, (ExitCodeGenerator) () -> 1);
                 System.exit(exitCode);
             }
 
@@ -70,6 +68,8 @@ public class DataSourceConfig
         } else
         {
             // Assumes H2
+            // jdbc:h2:mem:testdb - java database connector : using H2 database :
+            //                      storing it in memory : database storing memory is testdb
             myUrlString = "jdbc:h2:mem:testdb";
             myDriverClass = "org.h2.Driver";
             myDBUser = "sa";
@@ -78,14 +78,13 @@ public class DataSourceConfig
 
         logger.info("Database URL is " + myUrlString);
         return DataSourceBuilder.create()
-                                .username(myDBUser)
-                                .password(myDBPassword)
-                                .url(myUrlString)
-                                .driverClassName(myDriverClass)
-                                .build();
+                .username(myDBUser)
+                .password(myDBPassword)
+                .url(myUrlString)
+                .driverClassName(myDriverClass)
+                .build();
     }
 
-    // implementation
     @Bean(name = "jdbcCustom")
 
     @Autowired
